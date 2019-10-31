@@ -1,12 +1,14 @@
 package main
 
 import (
+	"demo/go-clean-demo/fakedb"
 	"encoding/json"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"time"
 )
 
 type requestData struct {
@@ -27,9 +29,7 @@ type errorMessage struct {
 	ErrorMsg  string `json:"error_msg"`
 }
 
-
 func main() {
-var db *LocationCollection
 	log.Println("GPS service is starting...")
 
 	r := mux.NewRouter()
@@ -39,11 +39,10 @@ var db *LocationCollection
 
 	log.Println("GPS service is on 8989")
 
-	headersOk := handlers.AllowedHeaders([]string{"Origin", "X-Requested-With", "Accept", "Content-Type"})
-	// ORIGIN_ALLOWED is like `scheme://dns[:port]`, or `*` (insecure)
-	//originsOk := handlers.AllowedOrigins([]string{os.Getenv("ORIGIN_ALLOWED")})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
+	headersOk := handlers.AllowedHeaders([]string{"Origin", "X-Requested-With", "Accept", "Content-Type"})
+
 	log.Fatal(http.ListenAndServe(":8989", handlers.CORS(originsOk, headersOk, methodsOk)(apiRouter)))
 }
 
@@ -57,9 +56,55 @@ func sendResponse(w http.ResponseWriter, statusCode int, output interface{}) {
 
 func addNewGPSLocation(w http.ResponseWriter, r *http.Request) {
 
-	sendResponse(w, http.StatusInternalServerError, errorMessage{
-		ErrorCode: http.StatusInternalServerError,
-		ErrorMsg:  "cannot read inserted-data",
+	reqData := requestData{}
+
+	errReqData := json.NewDecoder(r.Body).Decode(&reqData)
+	if errReqData != nil {
+		sendResponse(w, http.StatusInternalServerError, errorMessage{
+			ErrorCode: http.StatusBadRequest,
+			ErrorMsg:  "request body mismatched",
+		})
+		return
+	}
+
+	t, errTime := time.Parse("2006-01-02 15:04:05Z07:00", reqData.Datetime)
+	if errTime != nil {
+		sendResponse(w, http.StatusInternalServerError, errorMessage{
+			ErrorCode: http.StatusBadRequest,
+			ErrorMsg:  "time-format mismatched",
+		})
+		return
+	}
+
+	if (reqData.Lat < 0 || 180 < reqData.Lat) || (reqData.Long < 0 || 180 < reqData.Long) {
+		sendResponse(w, http.StatusInternalServerError, errorMessage{
+			ErrorCode: http.StatusBadRequest,
+			ErrorMsg:  "Lat or Long is not corrected",
+		})
+		return
+	}
+
+	db := fakedb.InitLocationCollection()
+
+	db.AddNewLocation(fakedb.Location{
+		Time: t,
+		Lat:  reqData.Lat,
+		Long: reqData.Long,
 	})
+
+	locationList := db.GetAll()
+
+	resp := []responseData{}
+
+	for _, v := range locationList {
+		resp = append(resp, responseData{
+			Id:       *v.Id,
+			Datetime: v.Time.Format(time.RFC1123),
+			Lat:      v.Lat,
+			Long:     v.Long,
+		})
+	}
+
+	sendResponse(w, http.StatusInternalServerError, resp)
 	return
 }

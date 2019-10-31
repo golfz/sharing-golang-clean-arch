@@ -3,20 +3,32 @@ package fakedb
 import "time"
 
 type Location struct {
-	id int64
-	time time.Time
-	lat  float64
-	long float64
+	Id       *int64
+	Time     time.Time
+	Lat      float64
+	Long     float64
+	DeviceId int64
 }
 
+var db *LocationCollection
+
 type LocationCollection struct {
-	locationCollection []Location
+	collection []Location
 }
 
 func InitLocationCollection() *LocationCollection {
-	return &LocationCollection{}
+	if db == nil {
+		db = &LocationCollection{}
+	}
+	return db
 }
 
 func (d *LocationCollection) AddNewLocation(location Location) {
-	d.locationCollection = append(d.locationCollection, location)
+	newId := int64(len(d.collection) + 1)
+	location.Id = &newId
+	d.collection = append(d.collection, location)
+}
+
+func (d *LocationCollection) GetAll() []Location {
+	return d.collection
 }
