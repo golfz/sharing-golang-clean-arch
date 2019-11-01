@@ -16,7 +16,24 @@ type responseData struct {
 	Speed    string  `json:"speed"`
 }
 
-func PresentAddLocationResponse(w http.ResponseWriter, responseBody []entity.Location) {
+type ErrorMessage struct {
+	ErrorCode int    `json:"error_code"`
+	ErrorMsg  string `json:"error_msg"`
+}
+
+type LocationPresenter struct {
+	v *view.JsonResponseView
+	w http.ResponseWriter
+}
+
+func InitLocationPresenter(w http.ResponseWriter, v *view.JsonResponseView) *LocationPresenter {
+	return &LocationPresenter{
+		w: w,
+		v: v,
+	}
+}
+
+func (p *LocationPresenter) PresentAddLocationResponse(responseBody []entity.Location) {
 
 	resp := []responseData{}
 
@@ -33,5 +50,5 @@ func PresentAddLocationResponse(w http.ResponseWriter, responseBody []entity.Loc
 		})
 	}
 
-	view.SendResponse(w, http.StatusInternalServerError, resp)
+	p.v.SendResponse(http.StatusInternalServerError, resp)
 }
