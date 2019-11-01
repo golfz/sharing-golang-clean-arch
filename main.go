@@ -1,7 +1,7 @@
 package main
 
 import (
-	"demo/go-clean-demo/ctrl"
+	"demo/go-clean-demo/controller"
 	"demo/go-clean-demo/presenter"
 	"demo/go-clean-demo/view"
 	_ "github.com/go-sql-driver/mysql"
@@ -31,9 +31,8 @@ func main() {
 
 func addNewGPSLocation(w http.ResponseWriter, r *http.Request) {
 	v := view.InitJsonResponseView(w)
-	p := presenter.InitLocationPresenter(w, v)
+	pSuccess := presenter.InitLocationPresenter(w, v)
 
-	controller := ctrl.InitLocationCtrl(w, r, v, p)
-
-	controller.AddLocationCtrl()
+	ctrl := controller.InitLocationController(w, r, v, pSuccess)
+	ctrl.AddLocationCtrl()
 }

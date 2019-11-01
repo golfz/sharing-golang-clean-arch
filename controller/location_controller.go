@@ -1,4 +1,4 @@
-package ctrl
+package controller
 
 import (
 	"demo/go-clean-demo/entity"
@@ -24,7 +24,7 @@ type LocationCtrl struct {
 	pSuccess *presenter.LocationPresenter
 }
 
-func InitLocationCtrl(w http.ResponseWriter, r *http.Request, v *view.JsonResponseView, pSuccess *presenter.LocationPresenter) *LocationCtrl {
+func InitLocationController(w http.ResponseWriter, r *http.Request, v *view.JsonResponseView, pSuccess *presenter.LocationPresenter) *LocationCtrl {
 	return &LocationCtrl{
 		writer:   w,
 		request:  r,
