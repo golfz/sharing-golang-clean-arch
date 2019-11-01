@@ -1,6 +1,9 @@
 package fakedb
 
-import "time"
+import (
+	"math/rand"
+	"time"
+)
 
 type Location struct {
 	Id       *int64
@@ -8,6 +11,10 @@ type Location struct {
 	Lat      float64
 	Long     float64
 	DeviceId int64
+}
+
+func (d *Location) GetSpeedMPH() int64 {
+	return int64(rand.Intn(40) + 60) // 60 - 100
 }
 
 var db *LocationCollection

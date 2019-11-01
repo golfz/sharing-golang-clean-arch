@@ -3,6 +3,7 @@ package main
 import (
 	"demo/go-clean-demo/fakedb"
 	"encoding/json"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -22,6 +23,7 @@ type responseData struct {
 	Datetime string  `json:"datetime"`
 	Lat      float64 `json:"lat"`
 	Long     float64 `json:"long"`
+	Speed    string  `json:"speed"`
 }
 
 type errorMessage struct {
@@ -97,11 +99,15 @@ func addNewGPSLocation(w http.ResponseWriter, r *http.Request) {
 	resp := []responseData{}
 
 	for _, v := range locationList {
+		kmh := float64(v.GetSpeedMPH()) * 1.60934
+		speed := fmt.Sprintf("%d km/h", int64(kmh))
+
 		resp = append(resp, responseData{
 			Id:       *v.Id,
 			Datetime: v.Time.Format(time.RFC1123),
 			Lat:      v.Lat,
 			Long:     v.Long,
+			Speed:    speed,
 		})
 	}
 
