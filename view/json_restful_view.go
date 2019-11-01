@@ -5,10 +5,20 @@ import (
 	"net/http"
 )
 
-func SendResponse(w http.ResponseWriter, statusCode int, output interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
+type JsonResponseView struct {
+	writer http.ResponseWriter
+}
+
+func InitJsonResponseView(w http.ResponseWriter) *JsonResponseView {
+	return &JsonResponseView{
+		writer: w,
+	}
+}
+
+func (v *JsonResponseView) SendResponse(statusCode int, output interface{}) {
+	v.writer.Header().Set("Content-Type", "application/json")
+	v.writer.WriteHeader(statusCode)
 	if output != nil {
-		json.NewEncoder(w).Encode(output)
+		json.NewEncoder(v.writer).Encode(output)
 	}
 }
