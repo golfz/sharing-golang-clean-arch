@@ -50,5 +50,5 @@ func (p *LocationPresenter) PresentAddLocationResponse(responseBody []entity.Loc
 		})
 	}
 
-	p.v.SendResponse(http.StatusInternalServerError, resp)
+	p.v.SendResponse(http.StatusCreated, resp)
 }

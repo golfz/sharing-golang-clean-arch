@@ -74,7 +74,7 @@ func (ctrl *LocationCtrl) AddLocationCtrl() {
 
 	locationList := locationModel.GetAll()
 
-	ctrl.pSuccess.PresentAddLocationResponse()
+	ctrl.pSuccess.PresentAddLocationResponse(locationList)
 
 	return
 }
