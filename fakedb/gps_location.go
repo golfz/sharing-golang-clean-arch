@@ -17,25 +17,37 @@ func (d *Location) GetSpeedMPH() int64 {
 	return int64(rand.Intn(40) + 60) // 60 - 100
 }
 
-var db *LocationCollection
+////////////////////////////////////////////////////////////
 
-type LocationCollection struct {
-	collection []Location
+var db *DBConnection
+
+type DBConnection struct {
+	locationTable []Location
 }
 
-func InitLocationCollection() *LocationCollection {
+func InitDBConnection() *DBConnection {
 	if db == nil {
-		db = &LocationCollection{}
+		db = &DBConnection{}
 	}
 	return db
 }
 
-func (d *LocationCollection) AddNewLocation(location Location) {
-	newId := int64(len(d.collection) + 1)
-	location.Id = &newId
-	d.collection = append(d.collection, location)
+/////////////////////////////////////////////////////////////
+
+type LocationModel struct {
+	db *DBConnection
 }
 
-func (d *LocationCollection) GetAll() []Location {
-	return d.collection
+func InitLocationModel(db *DBConnection) *LocationModel {
+	return &LocationModel{db: db}
+}
+
+func (d *LocationModel) AddNewLocation(location Location) {
+	newId := int64(len(d.db.locationTable) + 1)
+	location.Id = &newId
+	d.db.locationTable = append(d.db.locationTable, location)
+}
+
+func (d *LocationModel) GetAll() []Location {
+	return d.db.locationTable
 }

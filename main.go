@@ -86,15 +86,17 @@ func addNewGPSLocation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db := fakedb.InitLocationCollection()
+	db := fakedb.InitDBConnection()
 
-	db.AddNewLocation(fakedb.Location{
+	locationModel := fakedb.InitLocationModel(db);
+
+	locationModel.AddNewLocation(fakedb.Location{
 		Time: t,
 		Lat:  reqData.Lat,
 		Long: reqData.Long,
 	})
 
-	locationList := db.GetAll()
+	locationList := locationModel.GetAll()
 
 	resp := []responseData{}
 
