@@ -37,6 +37,7 @@ func main() {
 	r := mux.NewRouter()
 
 	apiRouter := r.PathPrefix("/api/v1").Subrouter()
+
 	apiRouter.HandleFunc("/gps-location", addNewGPSLocation).Methods("POST")
 
 	log.Println("GPS service is on 8989")
@@ -48,13 +49,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8989", handlers.CORS(originsOk, headersOk, methodsOk)(apiRouter)))
 }
 
-func sendResponse(w http.ResponseWriter, statusCode int, output interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-	if output != nil {
-		json.NewEncoder(w).Encode(output)
-	}
-}
+
 
 func addNewGPSLocation(w http.ResponseWriter, r *http.Request) {
 
@@ -78,7 +73,7 @@ func addNewGPSLocation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if (reqData.Lat < 0 || 180 < reqData.Lat) || (reqData.Long < 0 || 180 < reqData.Long) {
+	if (reqData.Lat < -90 || 90 < reqData.Lat) || (reqData.Long < -180 || 180 < reqData.Long) {
 		sendResponse(w, http.StatusInternalServerError, errorMessage{
 			ErrorCode: http.StatusBadRequest,
 			ErrorMsg:  "Lat or Long is not corrected",
