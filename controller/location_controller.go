@@ -5,7 +5,7 @@ import (
 	"demo/go-clean-demo/fakedb"
 	"demo/go-clean-demo/model"
 	"demo/go-clean-demo/presenter"
-	"demo/go-clean-demo/view"
+	"demo/go-clean-demo/presenter/viewmodel"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -18,18 +18,16 @@ type requestData struct {
 }
 
 type LocationCtrl struct {
-	writer   http.ResponseWriter
 	request  *http.Request
-	v        *view.JsonResponseView
 	pSuccess *presenter.LocationPresenter
+	pError   *presenter.ErrorPresenter
 }
 
-func InitLocationController(w http.ResponseWriter, r *http.Request, v *view.JsonResponseView, pSuccess *presenter.LocationPresenter) *LocationCtrl {
+func InitLocationController(r *http.Request, pSuccess *presenter.LocationPresenter, pError *presenter.ErrorPresenter) *LocationCtrl {
 	return &LocationCtrl{
-		writer:   w,
 		request:  r,
-		v:        v,
 		pSuccess: pSuccess,
+		pError:   pError,
 	}
 }
 
@@ -39,19 +37,17 @@ func (ctrl *LocationCtrl) AddLocationCtrl() {
 	errReqData := json.NewDecoder(ctrl.request.Body).Decode(&reqData)
 	if errReqData != nil {
 
-		ctrl.v.SendResponse(http.StatusInternalServerError, presenter.ErrorMessage{
+		ctrl.pError.PresentErrorResponse(http.StatusInternalServerError, viewmodel.ErrorMessage{
 			ErrorCode: http.StatusBadRequest,
 			ErrorMsg:  "request body mismatched",
 		})
-
-		ctrl.pSuccess.PresentAddLocationResponse(locationList)
 
 		return
 	}
 
 	t, errTime := time.Parse("2006-01-02 15:04:05Z07:00", reqData.Datetime)
 	if errTime != nil {
-		ctrl.v.SendResponse(http.StatusInternalServerError, presenter.ErrorMessage{
+		ctrl.pError.PresentErrorResponse(http.StatusInternalServerError, viewmodel.ErrorMessage{
 			ErrorCode: http.StatusBadRequest,
 			ErrorMsg:  "time-format mismatched",
 		})
@@ -59,7 +55,7 @@ func (ctrl *LocationCtrl) AddLocationCtrl() {
 	}
 
 	if (reqData.Lat < -90 || 90 < reqData.Lat) || (reqData.Long < -180 || 180 < reqData.Long) {
-		ctrl.v.SendResponse(http.StatusInternalServerError, presenter.ErrorMessage{
+		ctrl.pError.PresentErrorResponse(http.StatusInternalServerError, viewmodel.ErrorMessage{
 			ErrorCode: http.StatusBadRequest,
 			ErrorMsg:  "Lat or Long is not corrected",
 		})

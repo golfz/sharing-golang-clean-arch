@@ -30,9 +30,12 @@ func main() {
 }
 
 func addNewGPSLocation(w http.ResponseWriter, r *http.Request) {
-	v := view.InitJsonResponseView(w)
-	pSuccess := presenter.InitLocationPresenter(w, v)
 
-	ctrl := controller.InitLocationController(w, r, v, pSuccess)
+	v := view.InitJsonResponseView(w)
+
+	pSuccess := presenter.InitLocationPresenter(v)
+	pError := presenter.InitErrorPresenter(v)
+
+	ctrl := controller.InitLocationController(r, pSuccess, pError)
 	ctrl.AddLocationCtrl()
 }
