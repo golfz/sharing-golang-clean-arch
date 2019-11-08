@@ -43,6 +43,9 @@ func (ctrl *LocationCtrl) AddLocationCtrl() {
 			ErrorCode: http.StatusBadRequest,
 			ErrorMsg:  "request body mismatched",
 		})
+
+		ctrl.pSuccess.PresentAddLocationResponse(locationList)
+
 		return
 	}
 

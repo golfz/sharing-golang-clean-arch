@@ -16,19 +16,12 @@ type responseData struct {
 	Speed    string  `json:"speed"`
 }
 
-type ErrorMessage struct {
-	ErrorCode int    `json:"error_code"`
-	ErrorMsg  string `json:"error_msg"`
-}
-
 type LocationPresenter struct {
 	v *view.JsonResponseView
-	w http.ResponseWriter
 }
 
-func InitLocationPresenter(w http.ResponseWriter, v *view.JsonResponseView) *LocationPresenter {
+func InitLocationPresenter(v *view.JsonResponseView) *LocationPresenter {
 	return &LocationPresenter{
-		w: w,
 		v: v,
 	}
 }
