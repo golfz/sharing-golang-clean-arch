@@ -1,11 +1,10 @@
 package controller
 
 import (
-	"demo/go-clean-demo/entity"
-	"demo/go-clean-demo/fakedb"
-	"demo/go-clean-demo/model"
 	"demo/go-clean-demo/presenter"
 	"demo/go-clean-demo/presenter/viewmodel"
+	"demo/go-clean-demo/usecase"
+	"demo/go-clean-demo/usecase/ucinput"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -31,7 +30,7 @@ func InitLocationController(r *http.Request, pSuccess *presenter.LocationPresent
 	}
 }
 
-func (ctrl *LocationCtrl) AddLocation() {
+func (ctrl *LocationCtrl) AddLocation(uc *usecase.LocationUseCase) {
 	reqData := requestData{}
 
 	errReqData := json.NewDecoder(ctrl.request.Body).Decode(&reqData)
@@ -62,7 +61,11 @@ func (ctrl *LocationCtrl) AddLocation() {
 		return
 	}
 
+	useCaseInput := ucinput.NewLocation{
+		Time: t,
+		Lat:  reqData.Lat,
+		Long: reqData.Long,
+	}
 
-
-	return
+	uc.AddLocation(useCaseInput, ctrl.pSuccess)
 }

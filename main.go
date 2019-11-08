@@ -3,6 +3,7 @@ package main
 import (
 	"demo/go-clean-demo/controller"
 	"demo/go-clean-demo/presenter"
+	"demo/go-clean-demo/usecase"
 	"demo/go-clean-demo/view"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
@@ -36,6 +37,8 @@ func addNewGPSLocation(w http.ResponseWriter, r *http.Request) {
 	pSuccess := presenter.InitLocationPresenter(v)
 	pError := presenter.InitErrorPresenter(v)
 
+	uc := usecase.InitLocationUseCase()
+
 	ctrl := controller.InitLocationController(r, pSuccess, pError)
-	ctrl.AddLocation()
+	ctrl.AddLocation(uc)
 }
