@@ -2,6 +2,8 @@ package main
 
 import (
 	"demo/go-clean-demo/controller"
+	"demo/go-clean-demo/dao"
+	"demo/go-clean-demo/fakedb"
 	"demo/go-clean-demo/presenter"
 	"demo/go-clean-demo/usecase"
 	"demo/go-clean-demo/view"
@@ -37,7 +39,10 @@ func addNewGPSLocation(w http.ResponseWriter, r *http.Request) {
 	pSuccess := presenter.InitLocationPresenter(v)
 	pError := presenter.InitErrorPresenter(v)
 
-	uc := usecase.InitLocationUseCase()
+	db := fakedb.InitDBConnection()
+	daoFactory := dao.InitDaoFactory(db)
+
+	uc := usecase.InitLocationUseCase(daoFactory, pError)
 
 	ctrl := controller.InitLocationController(r, pSuccess, pError)
 	ctrl.AddLocation(uc)
