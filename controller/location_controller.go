@@ -31,7 +31,7 @@ func InitLocationController(r *http.Request, pSuccess *presenter.LocationPresent
 	}
 }
 
-func (ctrl *LocationCtrl) AddLocationCtrl() {
+func (ctrl *LocationCtrl) AddLocation() {
 	reqData := requestData{}
 
 	errReqData := json.NewDecoder(ctrl.request.Body).Decode(&reqData)
@@ -62,18 +62,7 @@ func (ctrl *LocationCtrl) AddLocationCtrl() {
 		return
 	}
 
-	db := fakedb.InitDBConnection()
 
-	locationModel := model.InitLocationModel(db);
-	locationModel.AddNewLocation(entity.Location{
-		Time: t,
-		Lat:  reqData.Lat,
-		Long: reqData.Long,
-	})
-
-	locationList := locationModel.GetAll()
-
-	ctrl.pSuccess.PresentAddLocationResponse(locationList)
 
 	return
 }

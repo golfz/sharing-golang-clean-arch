@@ -37,5 +37,5 @@ func addNewGPSLocation(w http.ResponseWriter, r *http.Request) {
 	pError := presenter.InitErrorPresenter(v)
 
 	ctrl := controller.InitLocationController(r, pSuccess, pError)
-	ctrl.AddLocationCtrl()
+	ctrl.AddLocation()
 }
