@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"demo/go-clean-demo/controller/request"
 	"demo/go-clean-demo/presenter"
 	"demo/go-clean-demo/usecase"
 	"demo/go-clean-demo/usecase/ucinput"
@@ -10,28 +11,22 @@ import (
 	"time"
 )
 
-type requestData struct {
-	Datetime string  `json:"datetime"`
-	Lat      float64 `json:"lat"`
-	Long     float64 `json:"long"`
-}
-
-type LocationCtrl struct {
+type LocationController struct {
 	request  *http.Request
 	pSuccess *presenter.LocationPresenter
 	pError   *presenter.ErrorPresenter
 }
 
-func InitLocationController(r *http.Request, pSuccess *presenter.LocationPresenter, pError *presenter.ErrorPresenter) *LocationCtrl {
-	return &LocationCtrl{
+func InitLocationController(r *http.Request, pSuccess *presenter.LocationPresenter, pError *presenter.ErrorPresenter) *LocationController {
+	return &LocationController{
 		request:  r,
 		pSuccess: pSuccess,
 		pError:   pError,
 	}
 }
 
-func (ctrl *LocationCtrl) AddLocation(uc *usecase.LocationUseCase) {
-	reqData := requestData{}
+func (ctrl *LocationController) AddLocation(uc *usecase.LocationUseCase) {
+	reqData := request.AddLocation{}
 
 	errReqData := json.NewDecoder(ctrl.request.Body).Decode(&reqData)
 	if errReqData != nil {
