@@ -2,6 +2,7 @@ package presenter
 
 import (
 	"demo/go-clean-demo/presenter/viewmodel"
+	"demo/go-clean-demo/usecase/ucoutput"
 	"demo/go-clean-demo/view"
 )
 
@@ -15,6 +16,9 @@ func InitErrorPresenter(v *view.JsonResponseView) *ErrorPresenter {
 	}
 }
 
-func (p *ErrorPresenter) PresentErrorResponse(status int, errBody viewmodel.ErrorMessage) {
-	p.v.SendResponse(status, errBody)
+func (p *ErrorPresenter) PresentErrorResponse(err ucoutput.Error) {
+	p.v.SendResponse(err.ErrorStatus, viewmodel.ErrorMessage{
+		ErrorCode: err.ErrorCode,
+		ErrorMsg:  err.ErrorMessage,
+	})
 }

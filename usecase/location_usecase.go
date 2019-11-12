@@ -4,7 +4,6 @@ import (
 	"demo/go-clean-demo/dao"
 	"demo/go-clean-demo/entity"
 	"demo/go-clean-demo/presenter"
-	"demo/go-clean-demo/presenter/viewmodel"
 	"demo/go-clean-demo/usecase/ucinput"
 	"demo/go-clean-demo/usecase/ucoutput"
 	"net/http"
@@ -31,17 +30,19 @@ func (uc *LocationUseCase) AddLocation(inputData ucinput.NewLocation, pSuccess *
 		Long: inputData.Long,
 	})
 	if errAdd != nil {
-		uc.pError.PresentErrorResponse(http.StatusInternalServerError, viewmodel.ErrorMessage{
-			ErrorCode: http.StatusInternalServerError,
-			ErrorMsg: "Can not add a new location",
+		uc.pError.PresentErrorResponse(ucoutput.Error{
+			ErrorStatus:  http.StatusInternalServerError,
+			ErrorCode:    http.StatusInternalServerError,
+			ErrorMessage: "Can not add a new location",
 		})
 	}
 
 	locationList, errGet := locationDao.GetAll()
 	if errGet != nil {
-		uc.pError.PresentErrorResponse(http.StatusInternalServerError, viewmodel.ErrorMessage{
-			ErrorCode: http.StatusInternalServerError,
-			ErrorMsg: "Can not add a new location",
+		uc.pError.PresentErrorResponse(ucoutput.Error{
+			ErrorStatus:  http.StatusInternalServerError,
+			ErrorCode:    http.StatusInternalServerError,
+			ErrorMessage: "Can not get all location after added",
 		})
 	}
 

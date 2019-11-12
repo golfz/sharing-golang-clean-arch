@@ -2,9 +2,9 @@ package controller
 
 import (
 	"demo/go-clean-demo/presenter"
-	"demo/go-clean-demo/presenter/viewmodel"
 	"demo/go-clean-demo/usecase"
 	"demo/go-clean-demo/usecase/ucinput"
+	"demo/go-clean-demo/usecase/ucoutput"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -36,9 +36,10 @@ func (ctrl *LocationCtrl) AddLocation(uc *usecase.LocationUseCase) {
 	errReqData := json.NewDecoder(ctrl.request.Body).Decode(&reqData)
 	if errReqData != nil {
 
-		ctrl.pError.PresentErrorResponse(http.StatusInternalServerError, viewmodel.ErrorMessage{
-			ErrorCode: http.StatusBadRequest,
-			ErrorMsg:  "request body mismatched",
+		ctrl.pError.PresentErrorResponse(ucoutput.Error{
+			ErrorStatus:  http.StatusBadRequest,
+			ErrorCode:    http.StatusBadRequest,
+			ErrorMessage: "request body mismatched",
 		})
 
 		return
@@ -46,17 +47,19 @@ func (ctrl *LocationCtrl) AddLocation(uc *usecase.LocationUseCase) {
 
 	t, errTime := time.Parse("2006-01-02 15:04:05Z07:00", reqData.Datetime)
 	if errTime != nil {
-		ctrl.pError.PresentErrorResponse(http.StatusInternalServerError, viewmodel.ErrorMessage{
-			ErrorCode: http.StatusBadRequest,
-			ErrorMsg:  "time-format mismatched",
+		ctrl.pError.PresentErrorResponse(ucoutput.Error{
+			ErrorStatus:  http.StatusBadRequest,
+			ErrorCode:    http.StatusBadRequest,
+			ErrorMessage: "time-format mismatched",
 		})
 		return
 	}
 
 	if (reqData.Lat < -90 || 90 < reqData.Lat) || (reqData.Long < -180 || 180 < reqData.Long) {
-		ctrl.pError.PresentErrorResponse(http.StatusInternalServerError, viewmodel.ErrorMessage{
-			ErrorCode: http.StatusBadRequest,
-			ErrorMsg:  "Lat or Long is not corrected",
+		ctrl.pError.PresentErrorResponse(ucoutput.Error{
+			ErrorStatus:  http.StatusBadRequest,
+			ErrorCode:    http.StatusBadRequest,
+			ErrorMessage: "Lat or Long is not corrected",
 		})
 		return
 	}
