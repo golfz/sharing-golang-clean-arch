@@ -1,20 +1,20 @@
 package usecase
 
 import (
-	"demo/go-clean-demo/dao"
 	"demo/go-clean-demo/entity"
 	"demo/go-clean-demo/presenter"
+	"demo/go-clean-demo/usecase/interface/daointerface"
 	"demo/go-clean-demo/usecase/ucinput"
 	"demo/go-clean-demo/usecase/ucoutput"
 	"net/http"
 )
 
 type LocationUseCase struct {
-	daoFactory *dao.DaoFactory
+	daoFactory daointerface.DaoFactory
 	pError     *presenter.ErrorPresenter
 }
 
-func InitLocationUseCase(daoFactory *dao.DaoFactory, pError *presenter.ErrorPresenter) *LocationUseCase {
+func InitLocationUseCase(daoFactory daointerface.DaoFactory, pError *presenter.ErrorPresenter) *LocationUseCase {
 	return &LocationUseCase{
 		daoFactory: daoFactory,
 		pError:     pError,
@@ -23,8 +23,9 @@ func InitLocationUseCase(daoFactory *dao.DaoFactory, pError *presenter.ErrorPres
 
 func (uc *LocationUseCase) AddLocation(inputData ucinput.NewLocation, pSuccess *presenter.LocationPresenter) {
 
-	locationDao := uc.daoFactory.GetLocationDao();
-	errAdd := locationDao.AddNewLocation(entity.Location{
+	locationAdder := uc.daoFactory.GetLocationAdder()
+
+	errAdd := locationAdder.AddNewLocation(entity.Location{
 		Time: inputData.Time,
 		Lat:  inputData.Lat,
 		Long: inputData.Long,
@@ -37,7 +38,9 @@ func (uc *LocationUseCase) AddLocation(inputData ucinput.NewLocation, pSuccess *
 		})
 	}
 
-	locationList, errGet := locationDao.GetAll()
+	locationGetter := uc.daoFactory.GetAllLocationGetter()
+
+	locationList, errGet := locationGetter.GetAll()
 	if errGet != nil {
 		uc.pError.PresentErrorResponse(ucoutput.Error{
 			ErrorStatus:  http.StatusInternalServerError,
