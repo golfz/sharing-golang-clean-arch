@@ -1,16 +1,16 @@
 package presenter
 
 import (
+	"demo/go-clean-demo/presenter/viewinterface"
 	"demo/go-clean-demo/presenter/viewmodel"
 	"demo/go-clean-demo/usecase/ucoutput"
-	"demo/go-clean-demo/view"
 )
 
 type ErrorPresenter struct {
-	v *view.JsonResponseView
+	v viewinterface.ResponseSender
 }
 
-func InitErrorPresenter(v *view.JsonResponseView) *ErrorPresenter {
+func InitErrorPresenter(v viewinterface.ResponseSender) *ErrorPresenter {
 	return &ErrorPresenter{
 		v: v,
 	}

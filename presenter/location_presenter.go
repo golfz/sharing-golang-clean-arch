@@ -1,19 +1,19 @@
 package presenter
 
 import (
+	"demo/go-clean-demo/presenter/viewinterface"
 	"demo/go-clean-demo/presenter/viewmodel"
 	"demo/go-clean-demo/usecase/ucoutput"
-	"demo/go-clean-demo/view"
 	"fmt"
 	"net/http"
 	"time"
 )
 
 type LocationPresenter struct {
-	v *view.JsonResponseView
+	v viewinterface.ResponseSender
 }
 
-func InitLocationPresenter(v *view.JsonResponseView) *LocationPresenter {
+func InitLocationPresenter(v viewinterface.ResponseSender) *LocationPresenter {
 	return &LocationPresenter{
 		v: v,
 	}

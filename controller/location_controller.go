@@ -2,8 +2,8 @@ package controller
 
 import (
 	"demo/go-clean-demo/controller/request"
-	"demo/go-clean-demo/presenter"
-	"demo/go-clean-demo/usecase"
+	"demo/go-clean-demo/usecase/interface/pinterface"
+	"demo/go-clean-demo/usecase/interface/ucinterface"
 	"demo/go-clean-demo/usecase/ucinput"
 	"demo/go-clean-demo/usecase/ucoutput"
 	"encoding/json"
@@ -13,11 +13,11 @@ import (
 
 type LocationController struct {
 	request  *http.Request
-	pSuccess *presenter.LocationPresenter
-	pError   *presenter.ErrorPresenter
+	pSuccess pinterface.AddLocationResponsePresenter
+	pError   pinterface.ErrorResponsePresenter
 }
 
-func InitLocationController(r *http.Request, pSuccess *presenter.LocationPresenter, pError *presenter.ErrorPresenter) *LocationController {
+func InitLocationController(r *http.Request, pSuccess pinterface.AddLocationResponsePresenter, pError pinterface.ErrorResponsePresenter) *LocationController {
 	return &LocationController{
 		request:  r,
 		pSuccess: pSuccess,
@@ -25,7 +25,7 @@ func InitLocationController(r *http.Request, pSuccess *presenter.LocationPresent
 	}
 }
 
-func (ctrl *LocationController) AddLocation(uc *usecase.LocationUseCase) {
+func (ctrl *LocationController) AddLocation(uc ucinterface.LocationAdder) {
 	reqData := request.AddLocation{}
 
 	errReqData := json.NewDecoder(ctrl.request.Body).Decode(&reqData)

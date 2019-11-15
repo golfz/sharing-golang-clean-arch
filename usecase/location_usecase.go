@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"demo/go-clean-demo/entity"
-	"demo/go-clean-demo/presenter"
 	"demo/go-clean-demo/usecase/interface/daointerface"
+	"demo/go-clean-demo/usecase/interface/pinterface"
 	"demo/go-clean-demo/usecase/ucinput"
 	"demo/go-clean-demo/usecase/ucoutput"
 	"net/http"
@@ -11,17 +11,17 @@ import (
 
 type LocationUseCase struct {
 	daoFactory daointerface.DaoFactory
-	pError     *presenter.ErrorPresenter
+	pError     pinterface.ErrorResponsePresenter
 }
 
-func InitLocationUseCase(daoFactory daointerface.DaoFactory, pError *presenter.ErrorPresenter) *LocationUseCase {
+func InitLocationUseCase(daoFactory daointerface.DaoFactory, pError pinterface.ErrorResponsePresenter) *LocationUseCase {
 	return &LocationUseCase{
 		daoFactory: daoFactory,
 		pError:     pError,
 	}
 }
 
-func (uc *LocationUseCase) AddLocation(inputData ucinput.NewLocation, pSuccess *presenter.LocationPresenter) {
+func (uc *LocationUseCase) AddLocation(inputData ucinput.NewLocation, pSuccess pinterface.AddLocationResponsePresenter) {
 
 	locationAdder := uc.daoFactory.GetLocationAdder()
 
